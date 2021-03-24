@@ -1,0 +1,96 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Telephone Keyboard</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <!-- ## telephone -->
+    <div class="telephone">
+      <!-- ## inputView -->
+      <input
+        type="text"
+        class="number-input"
+        id="numberInput"
+        value=""
+        placeholder=""
+      />
+      <!-- ## keyboard -->
+      <div class="keyboard">
+        <div class="number-row">
+          <button data-text=".,?!'&quot;1-()@/:_" data-number="1">1<small>.,!</small></button>
+          <button data-text="abc2" data-number="2">2 <small>abc</small></button>
+          <button data-text="def3" data-number="3">3 <small>def</small></button>
+        </div>
+        
+        <div class="number-row">
+          <button data-text="ghi4" data-number="4">4 <small>ghi</small></button>
+          <button data-text="jkl5" data-number="5">5 <small>jkl</small></button>
+          <button data-text="mno6" data-number="6">6 <small>mno</small></button>
+        </div>
+
+        <div class="number-row">
+          <button data-text="pqrs7" data-number="7">7 <small>pqrs</small></button>
+          <button data-text="tuv8" data-number="8">8 <small>tuv</small></button>
+          <button data-text="wxyz9" data-number="9">9 <small>wxyz</small></button>
+        </div>
+
+        <div class="number-row">
+          <button data-text="*">*</button>
+          <button data-text="0" data-number="0">0</button>
+          <button data-text="#">#</button>
+        </div>
+      </div>
+    </div>
+    
+    <script>
+      var buttons = document.querySelectorAll("button");
+      var inputView = document.querySelector("#numberInput");
+      var busy = true;
+      var delay = 1000;
+      var characterIndex = -1;
+      var prevClick = null;
+
+      var hold, isSameButtonPressing;
+
+      buttons.forEach(button => {
+        button.onmousedown = function (e) {
+          var text = this.getAttribute("data-text").split("");
+          var number = this.getAttribute("data-number");
+          busy = true;
+          clearTimeout(isSameButtonPressing);
+
+          if (prevClick !== e.target) {
+            busy = false;
+          }
+
+          if (characterIndex >= text.length - 1 || prevClick !== e.target) {
+            characterIndex = 0;
+            prevClick = e.target;
+          } else {
+            characterIndex++;
+          }
+
+          hold = setTimeout(() => {
+            inputView.value = inputView.value.slice(0, -1) + number;
+          }, delay);
+
+          inputView.value = busy
+            ? inputView.value.slice(0, -1) + text[characterIndex]
+            : inputView.value + text[characterIndex];
+        };
+
+        button.onmouseup = (e) => {
+          clearTimeout(hold);
+          busy = true;
+          isSameButtonPressing = setTimeout(() => {
+            characterIndex--;
+            busy = false;
+            e.target = null;
+          }, delay);
+        };
+      });
+    </script>
+  </body>
+</html>
